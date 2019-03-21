@@ -4,11 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.udacity.sandwichclub.model.Sandwich;
 import com.udacity.sandwichclub.utils.JsonUtils;
+
+import java.util.List;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -43,7 +46,7 @@ public class DetailActivity extends AppCompatActivity {
             return;
         }
 
-        populateUI();
+        populateUI(sandwich);
         Picasso.with(this)
                 .load(sandwich.getImage())
                 .into(ingredientsIv);
@@ -56,7 +59,53 @@ public class DetailActivity extends AppCompatActivity {
         Toast.makeText(this, R.string.detail_error_message, Toast.LENGTH_SHORT).show();
     }
 
-    private void populateUI() {
+    private void populateUI( Sandwich sandwich) {
+
+        setSandwichTexts(R.id.name_tv,sandwich.getMainName());
+
+        List<String> alsoKnownAsList = sandwich.getAlsoKnownAs();
+        StringBuilder alsonKANames = new StringBuilder();
+        if(alsoKnownAsList != null){
+            for(int i = 0; i < alsoKnownAsList.size(); i++){
+                alsonKANames.append(alsoKnownAsList.get(i));
+                if(i != (alsoKnownAsList.size() - 1)){
+                    alsonKANames.append("- ");
+                }
+            }
+        }
+        setSandwichTexts(R.id.also_known_tv, alsoKnownAsList.toString());
+
+        setSandwichTexts(R.id.origin_tv,sandwich.getPlaceOfOrigin());
+
+        List<String> ingredientsList = sandwich.getIngredients();
+        StringBuilder ingredientsName = new StringBuilder();
+        int count=1;
+        for(int i = 0; i < ingredientsList.size(); i++){
+
+            ingredientsName.append(count + "- ");
+            count++;
+            ingredientsName.append(ingredientsList.get(i));
+            if(i != (ingredientsList.size() - 1)){
+                ingredientsName.append("\n");
+            }
+        }
+        setSandwichTexts(R.id.ingredients_tv,ingredientsName.toString());
+
+        setSandwichTexts(R.id.description_tv,sandwich.getDescription());
 
     }
+
+    private void setSandwichTexts(int viewId,String text){
+
+        TextView view = findViewById(viewId);
+
+        if(!text.equals("")) {
+            view.setText(text);
+        }else{
+            view.setText("-");
+        }
+    }
 }
+
+
+
